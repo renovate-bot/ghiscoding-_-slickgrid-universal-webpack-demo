@@ -208,7 +208,7 @@ export default class Example02 {
         },
         excelExportOptions: {
           style: {
-            font: { outline: true, italic: true },
+            font: { outline: false, italic: true },
             format: '€0.00##;[Red](€0.00##)',
           },
           width: 18,
@@ -216,8 +216,18 @@ export default class Example02 {
         groupTotalsExcelExportOptions: {
           style: {
             alignment: { horizontal: 'center' },
-            font: { bold: true, color: 'FF005289', underline: 'single', fontName: 'Consolas', size: 10 },
-            fill: { type: 'pattern', patternType: 'solid', fgColor: 'FFE6F2F6' },
+            font: {
+              bold: true,
+              color: 'FF005289',
+              underline: 'single',
+              fontName: 'Consolas',
+              size: 10,
+            },
+            fill: {
+              type: 'pattern',
+              patternType: 'solid',
+              fgColor: 'FFE6F2F6',
+            },
             border: {
               top: { color: 'FFa500ff', style: 'thick' },
               left: { color: 'FFa500ff', style: 'medium' },
@@ -288,9 +298,18 @@ export default class Example02 {
         customExcelHeader: (workbook, sheet) => {
           const excelFormat = workbook.getStyleSheet().createFormat({
             // every color is prefixed with FF, then regular HTML color
-            font: { size: 18, fontName: 'Calibri', bold: true, color: 'FFFFFFFF' },
+            font: {
+              size: 18,
+              fontName: 'Calibri',
+              bold: true,
+              color: 'FFFFFFFF',
+            },
             alignment: { wrapText: true, horizontal: 'center' },
-            fill: { type: 'pattern', patternType: 'solid', fgColor: 'FF203764' },
+            fill: {
+              type: 'pattern',
+              patternType: 'solid',
+              fgColor: 'FF203764',
+            },
           });
           sheet.setRowInstructions(0, { height: 50 }); // change height of row 0
 
@@ -369,7 +388,10 @@ export default class Example02 {
   }
 
   exportToExcel() {
-    this.excelExportService.exportToExcel({ filename: 'export', format: 'xlsx' });
+    this.excelExportService.exportToExcel({
+      filename: 'export',
+      format: 'xlsx',
+    });
   }
 
   exportToPdf() {
