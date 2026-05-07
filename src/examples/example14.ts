@@ -24,6 +24,7 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
+import { showToast } from './utilities';
 import './example14.scss';
 
 const NB_ITEMS = 400;
@@ -724,7 +725,7 @@ export default class Example14 {
         console.log(errorMsg);
       }
     } else {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
     }
     return false;
   }

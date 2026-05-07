@@ -5,6 +5,7 @@ import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanil
 import DOMPurify from 'dompurify';
 import type { TranslateService } from '../translate.service';
 import { ExampleGridOptions } from './example-grid-options';
+import { showToast } from './utilities';
 import './example07.scss';
 import '../material-styles.scss';
 
@@ -631,7 +632,7 @@ export default class Example07 {
     console.log('handleValidationError', event.detail);
     const args = event.detail && event.detail.args;
     if (args.validationResults) {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
     }
   }
 
