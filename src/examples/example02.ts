@@ -10,6 +10,7 @@ import {
   type Column,
   type GridOption,
   type Grouping,
+  type OnFormattedDataCacheCompletedEventArgs,
   type SliderOption,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -17,6 +18,7 @@ import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
+import { showToast } from './utilities';
 import '../material-styles.scss';
 import './example02.scss';
 
@@ -65,6 +67,11 @@ export default class Example02 {
         console.log(`sort: ${window.performance.now() - this.sortStart} ms`); // use console for Cypress tests
       });
     });
+    this._bindingEventService.bind(
+      gridContainerElm,
+      'onformatteddatacachecompleted',
+      this.handleFormattedDataCacheCompleted.bind(this) as EventListener
+    );
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // you could group by duration on page load (must be AFTER the DataView is created, so after GridBundle)
@@ -216,18 +223,8 @@ export default class Example02 {
         groupTotalsExcelExportOptions: {
           style: {
             alignment: { horizontal: 'center' },
-            font: {
-              bold: true,
-              color: 'FF005289',
-              underline: 'single',
-              fontName: 'Consolas',
-              size: 10,
-            },
-            fill: {
-              type: 'pattern',
-              patternType: 'solid',
-              fgColor: 'FFE6F2F6',
-            },
+            font: { bold: true, color: 'FF005289', underline: 'single', fontName: 'Consolas', size: 10 },
+            fill: { type: 'pattern', patternType: 'solid', fgColor: 'FFE6F2F6' },
             border: {
               top: { color: 'FFa500ff', style: 'thick' },
               left: { color: 'FFa500ff', style: 'medium' },
@@ -280,8 +277,12 @@ export default class Example02 {
       enablePdfExport: true,
       enableFiltering: true,
       enableGrouping: true,
+      enableFormattedDataCache: false, // enable it when you have a large dataset (e.g. we'll enable it when loading over 10K)
       columnPicker: {
         onColumnsChanged: (e, args) => console.log(e, args),
+      },
+      groupItemMetadataOption: {
+        toggleOnNodeTitle: true, // enable toggle of group by clicking on the toggle icon or its title (not just the toggle icon)
       },
       enableExcelExport: true,
       excelExportOptions: {
@@ -298,18 +299,9 @@ export default class Example02 {
         customExcelHeader: (workbook, sheet) => {
           const excelFormat = workbook.getStyleSheet().createFormat({
             // every color is prefixed with FF, then regular HTML color
-            font: {
-              size: 18,
-              fontName: 'Calibri',
-              bold: true,
-              color: 'FFFFFFFF',
-            },
+            font: { size: 18, fontName: 'Calibri', bold: true, color: 'FFFFFFFF' },
             alignment: { wrapText: true, horizontal: 'center' },
-            fill: {
-              type: 'pattern',
-              patternType: 'solid',
-              fgColor: 'FF203764',
-            },
+            fill: { type: 'pattern', patternType: 'solid', fgColor: 'FF203764' },
           });
           sheet.setRowInstructions(0, { height: 50 }); // change height of row 0
 
@@ -370,6 +362,7 @@ export default class Example02 {
       };
     }
     if (this.sgb) {
+      this.sgb.slickGrid?.setOptions({ enableFormattedDataCache: rowCount > 10000 });
       this.sgb.dataset = tmpArray;
     }
     return tmpArray;
@@ -388,10 +381,7 @@ export default class Example02 {
   }
 
   exportToExcel() {
-    this.excelExportService.exportToExcel({
-      filename: 'export',
-      format: 'xlsx',
-    });
+    this.excelExportService.exportToExcel({ filename: 'export', format: 'xlsx' });
   }
 
   exportToPdf() {
@@ -412,7 +402,7 @@ export default class Example02 {
     this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
   }
 
-  groupByDurationOrderByCount(aggregateCollapsed) {
+  groupByDurationOrderByCount(aggregateCollapsed: boolean) {
     this.sgb?.slickGrid?.setSortColumns([]);
     this.sgb?.dataView?.setGrouping({
       getter: 'duration',
@@ -483,5 +473,15 @@ export default class Example02 {
       },
     ] as Grouping[]);
     this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
+  }
+
+  handleFormattedDataCacheCompleted(e: CustomEvent<{ args: OnFormattedDataCacheCompletedEventArgs }>) {
+    const args = e.detail.args;
+    showToast(
+      `Formatted Data Cache completed: ${args.totalRows} rows, ${args.totalFormattedCells} cells in ${args.durationMs} ms`,
+      'info',
+      5000
+    );
+    console.log('onFormattedDataCacheCompleted', e, args);
   }
 }

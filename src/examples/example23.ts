@@ -359,18 +359,9 @@ export default class Example23 {
         customExcelHeader: (workbook, sheet) => {
           const excelFormat = workbook.getStyleSheet().createFormat({
             // every color is prefixed with FF, then regular HTML color
-            font: {
-              size: 18,
-              fontName: 'Calibri',
-              bold: true,
-              color: 'FFFFFFFF',
-            },
+            font: { size: 18, fontName: 'Calibri', bold: true, color: 'FFFFFFFF' },
             alignment: { wrapText: true, horizontal: 'center' },
-            fill: {
-              type: 'pattern',
-              patternType: 'solid',
-              fgColor: 'FF203764',
-            },
+            fill: { type: 'pattern', patternType: 'solid', fgColor: 'FF203764' },
           });
           sheet.setRowInstructions(0, { height: 40 }); // change height of row 0
 
@@ -474,10 +465,7 @@ export default class Example23 {
         excelVal = `(${excelPriceCol}*${excelQtyCol})+${excelTaxesCol}`;
         break;
     }
-    return {
-      value: excelVal,
-      metadata: { type: 'formula', style: excelFormatId },
-    };
+    return { value: excelVal, metadata: { type: 'formula', style: excelFormatId } };
   }
 
   getData() {
@@ -485,21 +473,9 @@ export default class Example23 {
     const datasetTmp = [
       { id: i++, name: 'Oranges', qty: 4, taxable: false, price: 2.22 },
       { id: i++, name: 'Apples', qty: 3, taxable: false, price: 1.55 },
-      {
-        id: i++,
-        name: 'Honeycomb Cereals',
-        qty: 2,
-        taxable: true,
-        price: 4.55,
-      },
+      { id: i++, name: 'Honeycomb Cereals', qty: 2, taxable: true, price: 4.55 },
       { id: i++, name: 'Raisins', qty: 77, taxable: false, price: 0.23 },
-      {
-        id: i++,
-        name: 'Corn Flake Cereals',
-        qty: 1,
-        taxable: true,
-        price: 6.62,
-      },
+      { id: i++, name: 'Corn Flake Cereals', qty: 1, taxable: true, price: 6.62 },
       { id: i++, name: 'Tomatoes', qty: 3, taxable: false, price: 1.88 },
       { id: i++, name: 'Butter', qty: 1, taxable: false, price: 3.33 },
       { id: i++, name: 'BBQ Chicken', qty: 1, taxable: false, price: 12.33 },
